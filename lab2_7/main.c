@@ -15,6 +15,9 @@ long double func_2(long double x){
 //}
 
 
+//++++++++++++++++++++++++
+
+
 
 long double dich(long double left, long double right, long double eps, long double(*function)(long double)){
 
