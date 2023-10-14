@@ -33,6 +33,7 @@ long double fast_pow(long double x, int n){
 
 
 int main() {
-    printf("ans : %.10Lf\n", fast_pow(6.98,-3));
+    printf("ans : %.10Lf\n", fast_pow(6.98,3));
+    printf("ans : %.10Lf\n", fast_pow(10,3));
     printf("ans_geo : %.10Lf\n", geometry_middle(3, (long double)2, (long double)4, (long double)8));
 }

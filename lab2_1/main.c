@@ -5,6 +5,7 @@ int main() {
     printf("Hello, World!\n");
     printf("Hello, Tima!\n");
     printf("Hello, World!\n");
+    printf("ebat spasibo nahui\n");
 
 
 
