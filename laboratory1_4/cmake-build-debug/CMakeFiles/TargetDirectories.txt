@@ -1,0 +1,4 @@
+C:/Users/fedor/CLionProjects/laboratory1_4/cmake-build-debug/CMakeFiles/MyLib.dir
+C:/Users/fedor/CLionProjects/laboratory1_4/cmake-build-debug/CMakeFiles/laboratory1_4.dir
+C:/Users/fedor/CLionProjects/laboratory1_4/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/fedor/CLionProjects/laboratory1_4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
