@@ -1,0 +1,21 @@
+# ninja log v5
+2	79	7188125242409334	CMakeFiles/MyLib.dir/funcs.c.obj	30183d2facfc2934
+2	82	7188125786614628	CMakeFiles/laboratory_osi_1_4.dir/main.c.obj	7d943eebc19fde96
+79	137	7188125242987567	libMyLib.a	729b1d4c3d5384d5
+82	168	7188125787440432	laboratory_osi_1_4.exe	70cf2096fa12ec04
+2	87	7188134309575462	CMakeFiles/MyLib.dir/funcs.c.obj	30183d2facfc2934
+6	95	7188134309605443	CMakeFiles/laboratory_osi_1_4.dir/main.c.obj	7d943eebc19fde96
+88	165	7188134310350803	libMyLib.a	729b1d4c3d5384d5
+165	255	7188134311230763	laboratory_osi_1_4.exe	70cf2096fa12ec04
+1	80	7188175685877704	CMakeFiles/MyLib.dir/funcs.c.obj	30183d2facfc2934
+6	87	7188175685917706	CMakeFiles/laboratory_osi_1_4.dir/main.c.obj	7d943eebc19fde96
+81	156	7188175686647701	libMyLib.a	729b1d4c3d5384d5
+156	242	7188175687467702	laboratory_osi_1_4.exe	70cf2096fa12ec04
+2	94	7188194061430805	CMakeFiles/MyLib.dir/funcs.c.obj	30183d2facfc2934
+6	100	7188194061430805	CMakeFiles/laboratory_osi_1_4.dir/main.c.obj	7d943eebc19fde96
+95	167	7188194062170761	libMyLib.a	729b1d4c3d5384d5
+167	253	7188194063000860	laboratory_osi_1_4.exe	70cf2096fa12ec04
+1	83	7188195631840324	CMakeFiles/MyLib.dir/funcs.c.obj	30183d2facfc2934
+7	89	7188195631850347	CMakeFiles/laboratory_osi_1_4.dir/main.c.obj	7d943eebc19fde96
+84	145	7188195632450353	libMyLib.a	729b1d4c3d5384d5
+145	227	7188195633250425	laboratory_osi_1_4.exe	70cf2096fa12ec04
