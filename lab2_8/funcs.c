@@ -26,7 +26,7 @@ char* add_base(memory* stata, int base, char* first, char* second){
     long long size_1 = strlen(first);
     long long size_2 = strlen(second);
     long long max_size = (size_1>size_2) ? size_1 : size_2;
-    char* sum_str = (char*)malloc(sizeof(char)*(max_size + 1));//1 для \0
+    char* sum_str = (char*)malloc(sizeof(char)*(max_size + 1));
     long long over = 0;
     long long i, j, k;
 
@@ -39,7 +39,7 @@ char* add_base(memory* stata, int base, char* first, char* second){
     }
 
     if (over > 0) {
-        char* newResult = (char*)malloc((max_size + 2) * sizeof(char));  // +3 для учета переноса и завершающего символа '\0'
+        char* newResult = (char*)malloc((max_size + 2) * sizeof(char));
         if(newResult == NULL){
             *stata = msc_problem;
             return NULL;//дописать enum
