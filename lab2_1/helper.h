@@ -21,15 +21,20 @@ typedef enum ui_status_code{
     usc_bad_number
 }uint;
 
+typedef enum mem_status_code{
+    msc_well,
+    msc_bad_alloc
+}memory;
+
 int my_strlen(const char* string);
 int my_strcmp(const char* first, const char* second);
 input analysis(int argc, char** argv);
-char* reverse_string(char* str);
-char* up_half_string(char* str);
-char* ordered_string(char* str);
+char* reverse_string(char* str, memory* stat);
+char* up_half_string(char* str, memory* stat);
+char* ordered_string(char* str, memory* stat);
 uint arg_to_ud(char* str, unsigned int* answer);
 int random_number(int min, int max);
 void string_permutations(char** strs, int size);
-char* concatenation(char** strs, int count);
+char* concatenation(char** strs, int count,memory* stat);
 
 #endif //LAB2_1_HELPER_H

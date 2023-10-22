@@ -6,6 +6,7 @@ int main(int argc, char** argv) {
     char** new_argv_for_c = NULL;
     unsigned int seed = 0;
     int count_strings = 0;
+    memory status = msc_well;
     switch(analysis(argc, argv)){
         case isc_bad_input:
             printf("bad input\n");
@@ -14,15 +15,27 @@ int main(int argc, char** argv) {
             printf("the length of the string passed by the second argument:  %d\n", my_strlen(argv[2]));
             break;
         case isc_r:
-            string = reverse_string(argv[2]);
+            string = reverse_string(argv[2], &status);
+            if(status == msc_bad_alloc){
+                printf("Problem with memory allocation!");
+                return 0;
+            }
             printf("the reversed second line passed by the second argument: %s\n", string);
             break;
         case isc_u:
-            string = up_half_string(argv[2]);
+            string = up_half_string(argv[2],&status);
+            if(status == msc_bad_alloc){
+                printf("Problem with memory allocation!");
+                return 0;
+            }
             printf("a string with enlarged letters: %s\n", string);
             break;
         case isc_n:
-            string = ordered_string(argv[2]);
+            string = ordered_string(argv[2],&status);
+            if(status == msc_bad_alloc){
+                printf("Problem with memory allocation!");
+                return 0;
+            }
             printf("ordered string: %s\n", string);
 
             break;
@@ -53,11 +66,18 @@ int main(int argc, char** argv) {
                     string_permutations(new_argv_for_c, count_strings);
 
 
-                    string = concatenation(new_argv_for_c, count_strings);
+                    string = concatenation(new_argv_for_c, count_strings,&status);
+                    free(new_argv_for_c);
+                    if(status == msc_bad_alloc){
+                        printf("Problem with memory allocation!");
+                        return 0;
+                    }
+
+
 
                     printf("the new concat string: %s\n", string);
 
-                    free(new_argv_for_c);
+
 
 
                     break;

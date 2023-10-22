@@ -67,11 +67,13 @@ input analysis(int argc, char** argv){
     return isc_bad_input;
 }
 
-char* reverse_string(char* str)
+char* reverse_string(char* str, memory* stat)
 {
+    *stat = msc_well;
     int length = my_strlen(str) ;
     char* new_str = (char*)malloc(sizeof(char)*(length+1));
     if(new_str == NULL){
+        *stat = msc_bad_alloc;
         return NULL;//enum-чик
     }
 
@@ -87,10 +89,12 @@ char* reverse_string(char* str)
     return new_str;
 }
 
-char* up_half_string(char* str){
+char* up_half_string(char* str, memory* stat){
+    *stat = msc_well;
     int length = my_strlen(str);
     char* new_str = (char*)malloc(sizeof(char)*(length+1));
     if(new_str == NULL){
+        *stat = msc_bad_alloc;
         return NULL;//enum
     }
     for(int i = 0; i < length; ++i){
@@ -98,15 +102,18 @@ char* up_half_string(char* str){
     }
     new_str[length] = '\0';
     for(int i = 1; i < length; i += 2){
+
         new_str[i] = toupper(new_str[i]);
     }
     return new_str;
 }
 
-char* ordered_string(char* str){
+char* ordered_string(char* str, memory* stat){
+    *stat = msc_well;
     int length = my_strlen(str);
     char* new_str = (char*)malloc(sizeof(char)*(length+1));
     if(new_str == NULL){
+        *stat = msc_bad_alloc;
         return NULL;//enum
     }
     int count = 0;
@@ -136,7 +143,7 @@ uint arg_to_ud(char* str, unsigned int* answer){
     *answer = 0;
     int i = 0;
     while(str[i] != '\0'){
-        if(isdigit(str[i]))
+        if(iswdigit(str[i]))
         {
             if(*answer > ((unsigned int)-1)/10){
                 return usc_overflow;
@@ -166,7 +173,8 @@ void string_permutations(char** strs, int size){
     }
 }
 
-char* concatenation(char** strs, int count){
+char* concatenation(char** strs, int count,memory* stat){
+    *stat = msc_well;
     int full_size = 0;
     for(int i = 0; i < count; ++i){
         full_size += my_strlen(strs[i]);
@@ -174,6 +182,7 @@ char* concatenation(char** strs, int count){
 
     char* conclusion = (char*)malloc(sizeof(char) * (full_size+1));
     if(conclusion == NULL){
+        *stat = msc_bad_alloc;
         return NULL;//enum
     }
 
