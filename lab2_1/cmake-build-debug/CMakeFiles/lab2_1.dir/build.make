@@ -107,6 +107,7 @@ lab2_1_EXTERNAL_OBJECTS =
 lab2_1.exe: CMakeFiles/lab2_1.dir/main.c.obj
 lab2_1.exe: CMakeFiles/lab2_1.dir/funcs.c.obj
 lab2_1.exe: CMakeFiles/lab2_1.dir/build.make
+lab2_1.exe: libMyLib.a
 lab2_1.exe: CMakeFiles/lab2_1.dir/linklibs.rsp
 lab2_1.exe: CMakeFiles/lab2_1.dir/objects1.rsp
 lab2_1.exe: CMakeFiles/lab2_1.dir/link.txt

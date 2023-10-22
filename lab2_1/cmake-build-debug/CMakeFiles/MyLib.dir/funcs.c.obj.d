@@ -1,4 +1,4 @@
-CMakeFiles/lab2_1.dir/funcs.c.obj: \
+CMakeFiles/MyLib.dir/funcs.c.obj: \
  C:\Users\fedor\mai_labs_2\lab2_1\funcs.c \
  C:\Users\fedor\mai_labs_2\lab2_1\helper.h \
  C:/PROGRA~1/JETBRA~1/CLION2~1.2/bin/mingw/x86_64-w64-mingw32/include/stdio.h \
