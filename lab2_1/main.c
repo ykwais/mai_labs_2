@@ -1,11 +1,181 @@
 #include <stdio.h>
+//#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
-int main() {
-    printf("Hello, nigga!\n");
-    printf("Hello, World!\n");
-    printf("Hello, Tima!\n");
+int my_strlen(const char* string)
+{
+    int length = 0;
+    while(string[length] != '\0')
+    {
+        length++;
+    }
 
-    printf("e\n");
+    return length;
+}
 
+
+int my_strcmp(const char* first, const char* second)
+{
+    int len1 = my_strlen(first);
+    int len2 = my_strlen(second);
+
+    int i = 0;
+    while(first[i] != '\0' || second[i] != '\0')
+    {
+        if(first[i] != second[i])
+        {
+            if(len1 - len2 == 0){
+                return -1;
+            }
+            return len1 - len2;
+        }
+        i++;
+    }
     return 0;
+}
+
+enum input_status_code{
+    //isc_well,
+    isc_bad_input,
+    isc_l,
+    isc_r,
+    isc_u,
+    isc_n,
+    isc_c
+};
+typedef enum input_status_code input;
+
+input analysis(int argc, char** argv){
+    char act = '0';
+    if(argc < 3)
+    {
+        return isc_bad_input;
+    }
+    if(argc == 3 || argc >= 4)
+    {
+        if(!my_strcmp(argv[1], "-l") || !my_strcmp(argv[1], "-r") || !my_strcmp(argv[1], "-u") ||!my_strcmp(argv[1], "-n") ||!my_strcmp(argv[1], "-c")){
+            act = argv[1][1];
+        }else{
+            return isc_bad_input;
+        }
+
+    }
+
+    if(act == 'l' && argc == 3){
+        return isc_l;
+    }
+    if(act == 'r' && argc == 3){
+        return isc_r;
+    }
+    if(act == 'u' && argc == 3){
+        return isc_u;
+    }
+    if(act == 'n' && argc == 3){
+        return isc_n;
+    }
+    if(act == 'c' && argc >= 4){
+        return isc_c;
+    }
+
+    return isc_bad_input;
+}
+
+char* reverse_string(char* str)
+{
+    int length = my_strlen(str) ;
+    char* new_str = (char*)malloc(sizeof(char)*(length+1));
+    if(new_str == NULL){
+        return NULL;//enum-чик
+    }
+
+    int i = 0;
+    int j = 0;
+
+    for (i = length - 1, j = 0; i > 0, j < length; i--, j++)
+    {
+        new_str[j] = str[i];
+    }
+    new_str[length] = '\0';
+
+    return new_str;
+}
+
+char* up_half_string(char* str){
+    int length = my_strlen(str);
+    char* new_str = (char*)malloc(sizeof(char)*(length+1));
+    if(new_str == NULL){
+        return NULL;//enum
+    }
+    for(int i = 0; i < length; ++i){
+        new_str[i] = str[i];
+    }
+    new_str[length] = '\0';
+    for(int i = 1; i < length; i += 2){
+        new_str[i] = toupper(new_str[i]);
+    }
+    return new_str;
+}
+
+char* ordered_string(char* str){
+    int length = my_strlen(str);
+    char* new_str = (char*)malloc(sizeof(char)*(length+1));
+    if(new_str == NULL){
+        return NULL;//enum
+    }
+    int count = 0;
+    for(int i = 0; i < length; ++i){
+        if(isdigit(str[i])){
+            new_str[count++] = str[i];
+        }
+    }
+    for(int i = 0; i < length; ++i){
+        if(isalpha(str[i])){
+            new_str[count++] = str[i];
+        }
+    }
+    for(int i = 0; i < length; ++i){
+        if(!isdigit(str[i]) && !isalpha(str[i])){
+            new_str[count++] = str[i];
+        }
+    }
+    new_str[length] = '\0';
+
+    return new_str;
+
+
+}
+
+
+
+
+
+int main(int argc, char** argv) {
+    char* string = NULL;
+    switch(analysis(argc, argv)){
+        case isc_bad_input:
+            printf("bad input\n");
+            break;
+        case isc_l:
+            printf("the length of the string passed by the second argument:  %d\n", my_strlen(argv[2]));
+            break;
+        case isc_r:
+            string = reverse_string(argv[2]);
+            printf("the reversed second line passed by the second argument: %s\n", string);
+            break;
+        case isc_u:
+            string = up_half_string(argv[2]);
+            printf("a string with enlarged letters: %s\n", string);
+            break;
+        case isc_n:
+            string = ordered_string(argv[2]);
+            printf("ordered string: %s\n", string);
+            break;
+        case isc_c:
+            printf("c\n");
+            break;
+    }
+    free(string);
+
+
 }

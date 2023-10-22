@@ -71,7 +71,9 @@ char* adding(memory* stata, int base, int count, ...){
     va_start(ptr, count);
     for(int i = 0; i < count; ++i){
         char* current = va_arg(ptr, char*);
+        char *tmp = answer;
         answer = add_base(stata,base, answer, current);
+        free(tmp);
 
     }
     va_end(ptr);

@@ -4,11 +4,11 @@
 
 int main() {
     memory stat = msc_well;
-    int base = 17;
-    char* first = "G";
-    char* second = "Ag";
+    int base = 36;
+    char* first = "A";
+    char* second = "A";
     char* third = "B";
-    char* result = adding(&stat,base, 3, first, second, third);
+    char* result = adding(&stat,base, 2, first, second);
     if(stat == msc_problem){
         printf("Problems with memory allocation!\n");
         return 0;
