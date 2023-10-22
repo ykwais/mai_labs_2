@@ -3,4 +3,4 @@ project(lab2_1 C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(lab2_1 main.c)
+add_executable(lab2_1 main.c helper.h funcs.c)

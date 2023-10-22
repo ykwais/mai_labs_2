@@ -1,7 +1,7 @@
 #include <stdio.h>
-//#include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+
 
 int my_strlen(const char* string)
 {
@@ -35,16 +35,15 @@ int my_strcmp(const char* first, const char* second)
     return 0;
 }
 
-enum input_status_code{
-    //isc_well,
+typedef enum input_status_code{
     isc_bad_input,
     isc_l,
     isc_r,
     isc_u,
     isc_n,
     isc_c
-};
-typedef enum input_status_code input;
+}input;
+
 
 input analysis(int argc, char** argv){
     char act = '0';
@@ -146,12 +145,78 @@ char* ordered_string(char* str){
 
 }
 
+typedef enum ui_status_code{
+    usc_well,
+    usc_overflow,
+    usc_bad_number
+}uint;
 
+
+uint arg_to_ud(char* str, unsigned int* answer){
+    *answer = 0;
+    int i = 0;
+    while(str[i] != '\0'){
+        if(isdigit(str[i]))
+        {
+            if(*answer > ((unsigned int)-1)/10){
+                return usc_overflow;
+            }
+            *answer = *answer*10 + (str[i] - '0');
+        }else{
+            return usc_bad_number;
+        }
+        i++;
+    }
+    return usc_well;
+}
+
+
+
+
+int random_number(int min, int max){
+    return min + rand() % (max - min +1);
+}
+
+void string_permutations(char** strs, int size){
+    for(int i = 0; i < size; ++i){
+        int random = random_number(0, i);
+        char* tmp = strs[i];
+        strs[i] = strs[random];
+        strs[random] = tmp;
+    }
+}
+
+char* concatenation(char** strs, int count){
+    int full_size = 0;
+    for(int i = 0; i < count; ++i){
+        full_size += my_strlen(strs[i]);
+    }
+
+    char* conclusion = (char*)malloc(sizeof(char) * (full_size+1));
+    if(conclusion == NULL){
+        return NULL;//enum
+    }
+
+    int counter = 0;
+    for(int i = 0; i < count; ++i){
+        int local_len = my_strlen(strs[i]);
+        for(int j = 0; j < local_len; ++j){
+            conclusion[counter++] = strs[i][j];
+        }
+    }
+    conclusion[full_size] = '\0';
+    return conclusion;
+
+
+}
 
 
 
 int main(int argc, char** argv) {
     char* string = NULL;
+    char** new_argv_for_c = NULL;
+    unsigned int seed = 0;
+    int count_strings = 0;
     switch(analysis(argc, argv)){
         case isc_bad_input:
             printf("bad input\n");
@@ -170,12 +235,46 @@ int main(int argc, char** argv) {
         case isc_n:
             string = ordered_string(argv[2]);
             printf("ordered string: %s\n", string);
+
             break;
         case isc_c:
-            printf("c\n");
+            switch (arg_to_ud(argv[3], &seed)) {
+
+                case usc_bad_number:
+                    printf("You've inputted invalid unsigned int!\n");
+                    break;
+                case usc_overflow:
+                    printf("You've entered too large number, not an unsigned int\n");
+                    break;
+                case usc_well:
+
+                    srand(seed);
+
+                    count_strings = argc - 3;
+                    new_argv_for_c = (char**) malloc(sizeof(char*) * count_strings);
+                    if(new_argv_for_c == NULL){
+                        printf("Problem with memory allocation!\n");
+                        return 0;
+                    }
+                    new_argv_for_c[0] = argv[2];
+                    for(int i = 1; i < count_strings; ++i){
+                        new_argv_for_c[i] = argv[3 + i];
+                    }
+
+                    string_permutations(new_argv_for_c, count_strings);
+
+
+                    string = concatenation(new_argv_for_c, count_strings);
+
+                    printf("the new concat string: %s\n", string);
+
+                    free(new_argv_for_c);
+
+
+                    break;
+            }
+
             break;
     }
     free(string);
-
-
 }

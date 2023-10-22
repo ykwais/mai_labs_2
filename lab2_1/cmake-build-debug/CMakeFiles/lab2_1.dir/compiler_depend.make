@@ -23,7 +23,12 @@ CMakeFiles/lab2_1.dir/main.c.obj: ../main.c \
   C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
   C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/malloc.h \
   C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/mm_malloc.h \
-  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/errno.h
+  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/errno.h \
+  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/time.h \
+  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/_timeval.h \
+  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/sys/timeb.h \
+  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
+  C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/pthread_time.h
 
 
 ../main.c:
@@ -33,6 +38,8 @@ C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/s
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/_mingw_mac.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/stdio.h:
+
+C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/sys/timeb.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/corecrt_stdio_config.h:
 
@@ -64,6 +71,8 @@ C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/1
 
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed/syslimits.h:
 
+C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/pthread_time.h:
+
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/limits.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
@@ -71,3 +80,9 @@ C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/s
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/malloc.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/mm_malloc.h:
+
+C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/time.h:
+
+C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/_timeval.h:
+
+C:/Program\ Files/JetBrains/CLion\ 2022.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h:
