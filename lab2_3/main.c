@@ -13,6 +13,14 @@ typedef struct{
     int symbol_number;
 }one_file;
 
+typedef enum function_status_code{
+    null_pattern,
+    mem_problem,
+    file_problem,
+    fseek_problem,
+    all_well
+}status;
+
 
 bool is_same(char* pattern, char* array, int len)
 {
@@ -26,21 +34,21 @@ bool is_same(char* pattern, char* array, int len)
 
 
 
-void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* count_matches){
+status find_pattern_in_file(one_file** result,char* pattern, char* filename, int* count_matches){
 
     one_file* tmp = NULL;
     int length_of_pattern = strlen(pattern);
 
 
     if(length_of_pattern == 0){
-        return;//подойдет все-что угодно
+        return null_pattern;//подойдет все-что угодно
     }
 
 
 
     char* array_symbols = (char*)malloc(sizeof(char)*length_of_pattern);
     if(array_symbols == NULL){
-        return;//enum
+        return mem_problem;//enum
     }
     array_symbols[length_of_pattern] = '\0';
     int counter_string = 1;
@@ -49,7 +57,7 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
 
     FILE* file = NULL;
     if(!(file = fopen(filename, "r+"))){
-        return;//file troubles
+        return file_problem;//file troubles
     }
 
 
@@ -57,14 +65,14 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
     int position = 0;
 
     if(fseek(file,  0,SEEK_SET)!=0){
-        printf("troublefffffffffffffff");
-        return;//enum
+        //printf("troublefffffffffffffff");
+        return fseek_problem;//enum
     }
 
 
-    //printf("start pos: %d\n", ftell(file));
+
     while((one_byte = fgetc(file)) != EOF){
-        //printf("beg pos: %d\n", ftell(file));
+
         position++;
         int colvo = 0;
 
@@ -73,7 +81,7 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
             for(int i = 1; i < length_of_pattern;++i ){
                 int two_byte = 0;
                 if((two_byte = fgetc(file))!=EOF){
-                    //printf("beg pos: %d\n", ftell(file));
+
                     position++;
                     array_symbols[i] = two_byte;
                     colvo++;
@@ -81,19 +89,19 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
             }
             int sdvig = -1*colvo;
             position = position - colvo ;
-            //printf("prev pos: %d\n", ftell(file));
+
             if(fseek(file,  position,SEEK_SET)!=0){
                 printf("trouble");
-                return;//enum
+                return fseek_problem;//enum
             }
-            //printf("next pos: %d\n", ftell(file));
+
 
             if(is_same(pattern, array_symbols, length_of_pattern)){
                 int qolvo = *count_matches;
                 if( !(tmp = (one_file*)realloc(*result, sizeof(one_file)*(qolvo+1)))){
                     //enum
                     free(result);
-                    return;
+                    return mem_problem;
                 }else{
                     *result = tmp;
                 }
@@ -107,9 +115,9 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
                 for(int i = 0; i < length_of_pattern; ++i){
                     array_symbols[i] = 0;
                 }
-                //continue;
+
             }
-            //continue;
+
 
         }
         if(one_byte == '\n'){
@@ -126,25 +134,28 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
 
     free(array_symbols);
     fclose(file);
+    return all_well;
 }
 
 
 
-void pattern_search(one_file** result,char* pattern,int* count_matches, int count, ...){
-
+status pattern_search(one_file** result,char* pattern,int* count_matches, int count, ...){
+    status stat;
     va_list ptr;
     va_start(ptr, count);
     for(int i = 0; i < count; ++i){
 
         char* name = va_arg(ptr, char*);
 
-
-
-        find_pattern_in_file(result,pattern, name, count_matches);
+        stat = find_pattern_in_file(result,pattern, name, count_matches);
+        if(stat != all_well){
+            return stat;
+        }
 
     }
 
     va_end(ptr);
+    return all_well;
 }
 
 
@@ -157,13 +168,30 @@ int main() {
         printf("no mem\n");
         return 0;
     }
-   pattern_search(&result_info, "\n\n\n\n",&count_matches, count_of_file, "file1.txt","file2.txt");
 
-    for(int i = 0; i < count_matches; ++i){
-        printf("%s\n", result_info[i].filename);
-        printf("number string: %d\n", result_info[i].strok_number);
-        printf("number symbol: %d\n", result_info[i].symbol_number);
+   switch(pattern_search(&result_info, "\n\n\n\n",&count_matches, count_of_file, "file1.txt","file2.txt")){
+        case all_well:
+            for(int i = 0; i < count_matches; ++i){
+                printf("in file: %s\n", result_info[i].filename);
+                printf("number string: %d\n", result_info[i].strok_number);
+                printf("number symbol: %d\n", result_info[i].symbol_number);
+            }
+           break;
+        case fseek_problem:
+            printf("problem with fseek\n");
+           break;
+        case file_problem:
+            printf("problem with file opening\n");
+            break;
+       case mem_problem:
+           printf("Problem with memory allocation\n");
+           break;
+        case null_pattern:
+            printf("as you've entered null-pattern, anything will do\n");
+           break;
     }
+
+
 
     free(result_info);
 }
