@@ -4,7 +4,7 @@
 
 
 int main() {
-    final_representation(12, 7, (double)0.45, (double)0.125, (double)0.12, (double)0.50, (double)0.8125, (double)0.33333, (double)0.17);
+    final_representation(8, 5, 0.125, 0.5, 0.25, 0.1, 0.3);
 
 //    sim(78);
 //    printf("\n");
