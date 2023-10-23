@@ -1,0 +1,10 @@
+
+f
+ab
+c
+ab
+c
+ab
+c
+gfab	<-tab
+ab\ncabc

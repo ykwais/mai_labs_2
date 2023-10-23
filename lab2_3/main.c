@@ -4,6 +4,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+
+
+
 typedef struct{
     char* filename;
     int strok_number;
@@ -45,32 +48,45 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
 
 
     FILE* file = NULL;
-    if(!(file = fopen(filename, "r"))){
+    if(!(file = fopen(filename, "r+"))){
         return;//file troubles
     }
 
 
-    char one_byte = 0;
+    int one_byte = 0;
+    int position = 0;
+
+    if(fseek(file,  0,SEEK_SET)!=0){
+        printf("troublefffffffffffffff");
+        return;//enum
+    }
 
 
-
-    while(fread(&one_byte, sizeof(char), sizeof(one_byte), file)){
-
+    //printf("start pos: %d\n", ftell(file));
+    while((one_byte = fgetc(file)) != EOF){
+        //printf("beg pos: %d\n", ftell(file));
+        position++;
         int colvo = 0;
+
         if(one_byte == pattern[0]){
             array_symbols[0] = one_byte;
             for(int i = 1; i < length_of_pattern;++i ){
-                char two_byte = 0;
-                if(fread(&two_byte, sizeof(char), sizeof(two_byte), file)){
+                int two_byte = 0;
+                if((two_byte = fgetc(file))!=EOF){
+                    //printf("beg pos: %d\n", ftell(file));
+                    position++;
                     array_symbols[i] = two_byte;
                     colvo++;
                 }
             }
             int sdvig = -1*colvo;
-            if(fseek(file,  sdvig,SEEK_CUR)!=0){
+            position = position - colvo ;
+            //printf("prev pos: %d\n", ftell(file));
+            if(fseek(file,  position,SEEK_SET)!=0){
                 printf("trouble");
                 return;//enum
             }
+            //printf("next pos: %d\n", ftell(file));
 
             if(is_same(pattern, array_symbols, length_of_pattern)){
                 int qolvo = *count_matches;
@@ -91,7 +107,9 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
                 for(int i = 0; i < length_of_pattern; ++i){
                     array_symbols[i] = 0;
                 }
+                //continue;
             }
+            //continue;
 
         }
         if(one_byte == '\n'){
@@ -100,12 +118,17 @@ void find_pattern_in_file(one_file** result,char* pattern, char* filename, int* 
         }else{
             counter_symb++;
         }
+        for(int i = 0; i < length_of_pattern; ++i){
+            array_symbols[i] = 0;
+        }
 
     }
 
     free(array_symbols);
     fclose(file);
 }
+
+
 
 void pattern_search(one_file** result,char* pattern,int* count_matches, int count, ...){
 
@@ -114,6 +137,8 @@ void pattern_search(one_file** result,char* pattern,int* count_matches, int coun
     for(int i = 0; i < count; ++i){
 
         char* name = va_arg(ptr, char*);
+
+
 
         find_pattern_in_file(result,pattern, name, count_matches);
 
@@ -132,7 +157,7 @@ int main() {
         printf("no mem\n");
         return 0;
     }
-   pattern_search(&result_info, "\nab\nc",&count_matches, count_of_file, "file1.txt","file2.txt");
+   pattern_search(&result_info, "\n\n\n\n",&count_matches, count_of_file, "file1.txt","file2.txt");
 
     for(int i = 0; i < count_matches; ++i){
         printf("%s\n", result_info[i].filename);
