@@ -1,4 +1,5 @@
-CMakeFiles/lab2_3.dir/main.c.obj: C:\Users\fedor\mai_labs_2\lab2_3\main.c \
+CMakeFiles/MyLib.dir/funcs.c.obj: \
+ C:\Users\fedor\mai_labs_2\lab2_3\funcs.c \
  C:\Users\fedor\mai_labs_2\lab2_3\helper.h \
  C:/PROGRA~1/JETBRA~1/CLION2~1.2/bin/mingw/x86_64-w64-mingw32/include/stdio.h \
  C:/PROGRA~1/JETBRA~1/CLION2~1.2/bin/mingw/x86_64-w64-mingw32/include/corecrt_stdio_config.h \

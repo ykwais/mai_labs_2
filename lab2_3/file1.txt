@@ -1,17 +1,12 @@
-
-
-
-
-ab
-c
-
-
+abc
+abc
 
 
 ab
 c
+abc
 
 
-
-
+ab
+c
 gfab	<-tab

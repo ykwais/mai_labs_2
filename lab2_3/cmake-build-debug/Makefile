@@ -116,6 +116,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named MyLib
+
+# Build rule for target.
+MyLib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 MyLib
+.PHONY : MyLib
+
+# fast build rule for target.
+MyLib/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyLib.dir\build.make CMakeFiles/MyLib.dir/build
+.PHONY : MyLib/fast
+
+#=============================================================================
 # Target rules for targets named lab2_3
 
 # Build rule for target.
@@ -127,6 +140,30 @@ lab2_3: cmake_check_build_system
 lab2_3/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_3.dir\build.make CMakeFiles/lab2_3.dir/build
 .PHONY : lab2_3/fast
+
+funcs.obj: funcs.c.obj
+.PHONY : funcs.obj
+
+# target to build an object file
+funcs.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyLib.dir\build.make CMakeFiles/MyLib.dir/funcs.c.obj
+.PHONY : funcs.c.obj
+
+funcs.i: funcs.c.i
+.PHONY : funcs.i
+
+# target to preprocess a source file
+funcs.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyLib.dir\build.make CMakeFiles/MyLib.dir/funcs.c.i
+.PHONY : funcs.c.i
+
+funcs.s: funcs.c.s
+.PHONY : funcs.s
+
+# target to generate assembly for a file
+funcs.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyLib.dir\build.make CMakeFiles/MyLib.dir/funcs.c.s
+.PHONY : funcs.c.s
 
 main.obj: main.c.obj
 .PHONY : main.obj
@@ -160,7 +197,11 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... MyLib
 	@echo ... lab2_3
+	@echo ... funcs.obj
+	@echo ... funcs.i
+	@echo ... funcs.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
