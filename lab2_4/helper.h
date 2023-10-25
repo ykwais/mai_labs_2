@@ -14,9 +14,15 @@ typedef struct{
     ld y;
 } point;
 
+
+typedef enum out_status_code{
+    osc_yes,
+    osc_no
+}output;
+
 bool is_zero(ld eps, point f, point s);
 bool check(ld eps, point* first, point* second, ld* curr, ld* prev);
-bool is_convex(ld eps, int count, ...);
+output is_convex(ld eps, int count, ...);
 ld polynom(double value, int n, ...);
 
 #endif //LAB2_4_HELPER_H

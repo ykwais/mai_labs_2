@@ -1,6 +1,7 @@
 
 #include "helper.h"
 
+
 bool is_zero(ld eps, point f, point s){
     if((fabsl(f.x) < eps && fabsl(f.y) < eps) || (fabsl(s.x) < eps && fabsl(s.y) < eps) || (fabsl(f.x) < eps && fabsl(s.x) < eps) || (fabsl(f.y) < eps && fabsl(s.y) < eps) )
     {
@@ -28,11 +29,11 @@ bool check(ld eps, point* first, point* second, ld* curr, ld* prev){
     return true;
 }
 
-bool is_convex(ld eps, int count, ...)
+output is_convex(ld eps, int count, ...)
 {
     if(count < 3)
     {
-        return false;
+        return osc_no;
     }
 
     va_list ptr;
@@ -63,7 +64,7 @@ bool is_convex(ld eps, int count, ...)
         }
 
         if(!check(eps, &first_vec, &second_vec, &current_triple, &previous_triple)){
-            return false;
+            return osc_no;
         }
 
         second = third;
@@ -77,7 +78,7 @@ bool is_convex(ld eps, int count, ...)
 
 
     if(!check(eps, &first_vec, &second_vec, &current_triple, &previous_triple)){
-        return false;
+        return osc_no;
     }
 
     first_vec = second_vec;
@@ -87,11 +88,11 @@ bool is_convex(ld eps, int count, ...)
 
 
     if(!check(eps, &first_vec, &second_vec, &current_triple, &previous_triple)){
-        return false;
+        return osc_no;
     }
 
     va_end(ptr);
-    return true;
+    return osc_yes;
 }
 
 ld polynom(double value, int n, ...){
