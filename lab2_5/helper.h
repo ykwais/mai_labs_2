@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 typedef long long ll;
 
@@ -34,6 +36,14 @@ void add_to_buffer(char** buf, int* size_buf, int* written, int* want, char* new
 char* int_to_rom(int num, int* amount );
 char* zeck(unsigned int number, int* amount);
 unsigned int* fib_row(unsigned int max, int *amount);
+char* cc10_to_base_cc_lower(int num, int base, int* amount);
+char* cc10_to_base_cc_upper(ll num, int base, int* amount);
+bool is_lower_alpha(char c);
+bool is_upper_alpha(char c);
+int length_long_long(long long number);
+char* string_cc_to_10CC_lower(char *string, int base, int* amount);
+char* string_cc_to_10CC_upper(char *string, int base, int* amount);
+char* dump(const void *value, int size_of, int* amount);
 
 
 

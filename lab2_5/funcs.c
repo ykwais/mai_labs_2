@@ -87,68 +87,73 @@ int overfprintf(FILE* stream, char* format, ...)
 
             switch(current_flag){
                 case Ro: {
-//                    printf("Ro  ");
-//                    printf("%d\n", position);
                     int arg = va_arg(ptr, int);
                     string = int_to_rom(arg, &want_write_amount);
-
                     break;
                 }
 
                 case Zr:{
                     unsigned int arg = va_arg(ptr, unsigned int);
                     string = zeck(arg, &want_write_amount);
+                    break;
                 }
-//                    printf("Zr  ");
-//                    printf("%d\n", position);
+                case Cv: {
+                    int number = va_arg(ptr, int);
+                    int base = va_arg(ptr, int);
+                    string = cc10_to_base_cc_lower(number, base, &want_write_amount);
+                    break;
+                }
+
+
+                case CV:{
+                    int number = va_arg(ptr, int);
+                    int base = va_arg(ptr, int);
+                    string = cc10_to_base_cc_upper(number, base, &want_write_amount);
+                    break;
+                }
+
+
+                case to:{
+                    char* str = va_arg(ptr, char*);
+                    int base = va_arg(ptr, int);
+                    string = string_cc_to_10CC_lower(str, base, &want_write_amount);
+                }
+
+                    break;
+                case TO:{
+                    char* str = va_arg(ptr, char*);
+                    int base = va_arg(ptr, int);
+                    string = string_cc_to_10CC_upper(str, base, &want_write_amount);
+                }
+
+                    break;
+                case mi:{
+                    int arg = va_arg(ptr, int);
+                    string = dump(&arg, sizeof(int), &want_write_amount);
+                }
+
 
 
                     break;
-                case Cv:
-                    printf("Cv  ");
-                    printf("%d\n", position);
+                case mu:{
+                    unsigned int arg = va_arg(ptr, unsigned int);
+                    string = dump(&arg, sizeof(unsigned int), &want_write_amount);
+                }
 
 
                     break;
-                case CV:
-                    printf("CV  ");
-                    printf("%d\n", position);
+                case md:{
+                    double arg = va_arg(ptr, double);
+                    string = dump(&arg, sizeof(double), &want_write_amount);
+                }
 
-
-                    break;
-                case to:
-                    printf("to  ");
-                    printf("%d\n", position);
 
 
                     break;
-                case TO:
-                    printf("TO  ");
-                    printf("%d\n", position);
-
-
-                    break;
-                case mi:
-                    printf("mi  ");
-                    printf("%d\n", position);
-
-
-                    break;
-                case mu:
-                    printf("mu  ");
-                    printf("%d\n", position);
-
-
-                    break;
-                case md:
-                    printf("md  ");
-                    printf("%d\n", position);
-
-
-                    break;
-                case mf:
-                    printf("mf  ");
-                    printf("%d\n", position);
+                case mf:{
+                    float arg = va_arg(ptr, double );
+                    string = dump(&arg, sizeof(float), &want_write_amount);
+                }
 
 
                     break;
@@ -178,7 +183,7 @@ int overfprintf(FILE* stream, char* format, ...)
     }
 
     buffer[written] = '\0';
-    //printf("\n%s\n", buffer);
+    
 
     amount += vfprintf(stream, buffer, ptr);
 
@@ -379,3 +384,270 @@ char* zeck(unsigned int number, int* amount)
     *amount = n+1;
     return result;//correct;
 }
+
+
+char* cc10_to_base_cc_lower(int num, int base, int* amount)
+{
+    char* tmp = NULL;
+    if(base > 36 || base < 2){
+        base = 10;
+    }
+
+    int size = 2;
+    int count = 0;
+    int start = 0;
+
+    char* result = (char*)malloc(sizeof(char)*(size));
+    if(result == NULL){
+        return NULL; // mem bad alloc
+    }
+
+
+    int r;
+    if (num < 0) {
+        result[count] = '-';
+        count++;
+        start = 1;
+        num *= -1;
+    }
+
+
+    while (num > 0) {
+        r = num % base;
+        if(count >= size){
+            size *= 2;
+            if(!(tmp = (char*) realloc(result, size))){
+                free(result);
+                return NULL;//mem alloc problem
+            }
+            result = tmp;
+        }
+        result[count] = (r > 9) ? r - 10 + 'a' : r + 48;
+        count++;
+        num /= base;
+    }
+    for (int i = start, j = count - 1; i < j; i++, j--)
+    {
+        char tmp  = result[i];
+        result[i] = result[j];
+        result[j] = tmp;
+    }
+    result[count] = '\0';
+    *amount = count;
+    return result;
+}
+
+
+char* cc10_to_base_cc_upper(ll num, int base, int* amount)
+{
+    char* tmp = NULL;
+    if(base > 36 || base < 2){
+        base = 10;
+    }
+
+    int size = 2;
+    int count = 0;
+    int start = 0;
+
+    char* result = (char*)malloc(sizeof(char)*(size));
+    if(result == NULL){
+        return NULL; // mem bad alloc
+    }
+
+
+    int r;
+    if (num < 0) {
+        result[count] = '-';
+        count++;
+        start = 1;
+        num *= -1;
+    }
+
+
+    while (num > 0) {
+        r = num % base;
+        if(count >= size){
+            size *= 2;
+            if(!(tmp = (char*) realloc(result, size))){
+                free(result);
+                return NULL;//mem alloc problem
+            }
+            result = tmp;
+        }
+        result[count] = (r > 9) ? r - 10 + 'A' : r + 48;
+        count++;
+        num /= base;
+    }
+    for (int i = start, j = count - 1; i < j; i++, j--)
+    {
+        char tmp  = result[i];
+        result[i] = result[j];
+        result[j] = tmp;
+    }
+    result[count] = '\0';
+    *amount = count;
+    return result;
+}
+
+bool is_lower_alpha(char c){
+    return (c >= 97 && c <= 122);
+}
+
+bool is_upper_alpha(char c){
+    return (c >= 65 && c <= 90);
+}
+
+
+int length_long_long(long long number){
+    char random_string[20];
+    sprintf(random_string, "%lld",number);
+
+    return (int)strlen(random_string);
+}
+
+char* string_cc_to_10CC_lower(char *string, int base, int* amount) {//здесь буду отслеживать переполнение
+    if(base > 36 || base < 2){
+        base = 10;
+    }
+    bool negative = false;
+    char *ptr = string;
+    long long result = 0;
+    int count = 0;
+
+    while (*ptr) {
+        if(isdigit(*ptr) || is_lower_alpha(*ptr) || (*ptr == 45 && count == 0)){
+            if(*ptr == 45 && count == 0){
+                negative = true;
+                ptr++;
+                count++;
+                continue;
+            }
+            if(length_long_long(result) > 17 ){
+                //overflow
+                char* answer = cc10_to_base_cc_upper(result, 10, amount);
+                return answer;
+            }
+            result = result * base + (isdigit(*ptr) ? *ptr - '0' : *ptr - 'a' + 10);
+            ptr++;
+            count++;
+        }
+        else{
+            char* answer = cc10_to_base_cc_upper(result, 10, amount);
+            return answer;
+        }
+
+    }
+
+    if(negative)
+    {
+        result *= -1;
+    }
+
+    char* answer = cc10_to_base_cc_upper(result, 10, amount);
+    return answer;
+
+}
+
+
+char* string_cc_to_10CC_upper(char *string, int base, int* amount) {//здесь буду отслеживать переполнение
+    if(base > 36 || base < 2){
+        base = 10;
+    }
+    bool negative = false;
+    char *ptr = string;
+    long long result = 0;
+    int count = 0;
+
+    while (*ptr) {
+        if(isdigit(*ptr) || is_upper_alpha(*ptr) || (*ptr == 45 && count == 0)){
+            if(*ptr == 45 && count == 0){
+                negative = true;
+                ptr++;
+                count++;
+                continue;
+            }
+            if(length_long_long(result) > 17 ){
+                //overflow
+                char* answer = cc10_to_base_cc_upper(result, 10, amount);
+                return answer;
+            }
+            result = result * base + (isdigit(*ptr) ? *ptr - '0' : *ptr - 'A' + 10);
+            ptr++;
+            count++;
+        }
+        else{
+            char* answer = cc10_to_base_cc_upper(result, 10, amount);
+            return answer;
+        }
+
+    }
+
+    if(negative)
+    {
+        result *= -1;
+    }
+
+    char* answer = cc10_to_base_cc_upper(result, 10, amount);
+    return answer;
+
+}
+
+char* dump(const void *value, int size_of, int* amount)
+{
+    const unsigned char *bytes = (const unsigned char *)value;
+
+    int buffer_size =  size_of * 9;
+    int written = 0;
+    char* res = (char *) malloc(sizeof(char)*buffer_size);
+    if(res == NULL){
+        return NULL;//mem alloc problem
+    }
+
+    for (int i = size_of-1; i >=0; i--)
+    {
+        for (int bit = 7; bit >= 0; bit--)
+        {
+            int bit_value = (bytes[i] >> bit) & 1;
+            written += sprintf(res + written,  "%d", bit_value);
+        }
+        written += sprintf(res + written,  "%c", ' ');
+    }
+    *amount = written;
+    return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
