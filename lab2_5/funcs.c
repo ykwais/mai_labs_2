@@ -43,6 +43,10 @@ void add_to_buffer(char** buf, int* size_buf, int* written, int* want, char* new
 
 int overfprintf(FILE* stream, char* format, ...)
 {
+    int bl = 0;
+
+    int result_count = 0;
+
     int amount = 0;
 
     int length = strlen(format);
@@ -65,8 +69,19 @@ int overfprintf(FILE* stream, char* format, ...)
 
     while(format[position] != '\0' && position < length){
 
-        if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my)
-        {
+        if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my){
+            if(bl){
+                want_write_amount = 1;
+                add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, '\0');
+
+                amount += vfprintf(stream, buffer, ptr);
+                buffer[0] = '\0';
+                written = 0;
+                size_buf = 1;
+                bl = 0;
+
+            }
+
             char* string = NULL;
 
 
@@ -80,9 +95,12 @@ int overfprintf(FILE* stream, char* format, ...)
                     break;
                 }
 
-                case Zr:
-                    printf("Zr  ");
-                    printf("%d\n", position);
+                case Zr:{
+                    unsigned int arg = va_arg(ptr, unsigned int);
+                    string = zeck(arg, &want_write_amount);
+                }
+//                    printf("Zr  ");
+//                    printf("%d\n", position);
 
 
                     break;
@@ -145,6 +163,9 @@ int overfprintf(FILE* stream, char* format, ...)
 
         }
         else{
+            if(current_flag == not_my){
+                bl = 1;
+            }
 
             want_write_amount = 1;
             add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, format[position]);
@@ -157,8 +178,10 @@ int overfprintf(FILE* stream, char* format, ...)
     }
 
     buffer[written] = '\0';
-    printf("\n%s\n", buffer);
-    //amount = vfprintf(stream, buffer, ptr);
+    //printf("\n%s\n", buffer);
+
+    amount += vfprintf(stream, buffer, ptr);
+
     va_end(ptr);
     return amount;
 }
@@ -237,7 +260,7 @@ char* int_to_rom(int num, int* amount )
 
     while (num > 0) {
         while (num >= norm[i]) {
-            //counter++;
+
 
             if(i==11 || i == 1 || i == 3 || i == 5 || i == 7 || i == 9  ){
                 counter += 2;
@@ -263,4 +286,96 @@ char* int_to_rom(int num, int* amount )
     *amount = counter;
     tmp[counter] = '\0';
     return tmp;
+}
+
+unsigned int* fib_row(unsigned int max, int *amount)
+{
+    int size = 2;
+    int counter = 2;
+    unsigned int *res = (unsigned int *)malloc(sizeof(unsigned int) * size);
+    if (res == NULL)
+    {
+        return NULL;
+    }
+
+    res[0] = 1;
+    res[1] = 1;
+
+    while (res[counter - 1] < max)
+    {
+        unsigned int c = res[counter - 2] + res[counter - 1];
+
+        if (c >= UINT_MAX / 2)
+        {
+            free(res);
+            return NULL;
+        }
+
+        if (counter >= size)
+        {
+            size *= 2;
+            unsigned int *tmp = (unsigned int *)realloc(res, sizeof(unsigned int) * size);
+            if (tmp == NULL)
+            {
+                free(res);
+                return NULL;
+            }
+            res = tmp;
+        }
+        res[counter] = c;
+        counter++;
+    }
+    *amount = counter;
+    return res;
+}
+
+char* zeck(unsigned int number, int* amount)
+{
+    if (number >= UINT_MAX / 2)
+    {
+        return NULL;
+    }
+
+    int n = 0;
+    unsigned int* fibs = fib_row(number, &n);
+    if (fibs == NULL)
+    {
+        return NULL;/*invalid_input;*/
+    }
+
+    char* result = (char *)calloc(n + 2, sizeof(char));
+    if (result == NULL)
+    {
+        free(fibs);
+        return NULL;//memory_error;
+    }
+
+    //printf("%d", n);
+    for (int i = 0; i < n + 1; i++)
+    {
+        result[i] = '0';
+    }
+
+    int i = n - 1;
+    int ptr = n - 1;
+    while (number != 0)
+    {
+        if (number >= fibs[i])
+        {
+            number -= fibs[i];
+            result[ptr] = '1';
+        }
+        i--;
+        ptr--;
+        if (i < 0)
+        {
+            free(fibs);
+            return NULL;//runtime_error;
+        }
+    }
+    free(fibs);
+    result[n] = '1';
+    result[n + 1] = '\0';
+    *amount = n+1;
+    return result;//correct;
 }

@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 typedef long long ll;
 
@@ -31,6 +32,8 @@ flag type_flag(char* string);
 void add_to_buffer_1(char** buf, int* size_buf, int* written, int* want, char new);
 void add_to_buffer(char** buf, int* size_buf, int* written, int* want, char* new);
 char* int_to_rom(int num, int* amount );
+char* zeck(unsigned int number, int* amount);
+unsigned int* fib_row(unsigned int max, int *amount);
 
 
 
