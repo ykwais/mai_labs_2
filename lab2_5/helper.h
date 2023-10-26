@@ -29,6 +29,7 @@ typedef enum flag_status_code{
 }flag;
 
 
+int oversprintf(char** out, char* format, ...);
 int overfprintf(FILE* stream, char* format, ...);
 flag type_flag(char* string);
 void add_to_buffer_1(char** buf, int* size_buf, int* written, int* want, char new);

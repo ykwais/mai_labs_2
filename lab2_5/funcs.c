@@ -41,11 +41,10 @@ void add_to_buffer(char** buf, int* size_buf, int* written, int* want, char* new
 
 }
 
+
 int overfprintf(FILE* stream, char* format, ...)
 {
     int bl = 0;
-
-    int result_count = 0;
 
     int amount = 0;
 
@@ -183,11 +182,12 @@ int overfprintf(FILE* stream, char* format, ...)
     }
 
     buffer[written] = '\0';
-    
+
 
     amount += vfprintf(stream, buffer, ptr);
 
     va_end(ptr);
+    free(buffer);
     return amount;
 }
 
@@ -615,6 +615,189 @@ char* dump(const void *value, int size_of, int* amount)
     *amount = written;
     return res;
 }
+
+int oversprintf(char** out, char* format, ...)
+{
+    int bl = 0;
+
+    int amount = 0;
+
+    int length = strlen(format);
+
+    int position = 0;
+
+    int written = 0;
+
+    int size_buf = 1;
+
+    int want_write_amount = 0;
+
+    char* buffer = (char*)malloc(sizeof(char)*(size_buf));
+
+    int around_size = 0;
+
+    int finish_size = 1;
+    char* finish_string = (char*) malloc(sizeof(char) * finish_size);
+    if(finish_string == NULL){
+        return 0;//mem bad alloc
+    }
+
+    flag current_flag = u;
+
+    va_list ptr;
+    va_start(ptr, format);
+
+
+    while(format[position] != '\0' && position < length){
+
+        if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my){
+            if(bl){
+                want_write_amount = 1;
+                add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, '\0');
+                around_size += written;
+                if(around_size >= finish_size){
+                    finish_size = around_size + 2;
+                    char* tmp = NULL;
+                    if(!(tmp = (char*) realloc(finish_string, finish_size))){
+                        free(finish_string);
+                        return 0;
+                    }else{
+                        finish_string = tmp;
+                    }
+                }
+
+                amount += vsprintf(finish_string + amount, buffer, ptr);
+                buffer[0] = '\0';
+                written = 0;
+                size_buf = 1;
+                bl = 0;
+
+            }
+
+            char* string = NULL;
+
+
+            switch(current_flag){
+                case Ro: {
+                    int arg = va_arg(ptr, int);
+                    string = int_to_rom(arg, &want_write_amount);
+                    break;
+                }
+
+                case Zr:{
+                    unsigned int arg = va_arg(ptr, unsigned int);
+                    string = zeck(arg, &want_write_amount);
+                    break;
+                }
+                case Cv: {
+                    int number = va_arg(ptr, int);
+                    int base = va_arg(ptr, int);
+                    string = cc10_to_base_cc_lower(number, base, &want_write_amount);
+                    break;
+                }
+
+
+                case CV:{
+                    int number = va_arg(ptr, int);
+                    int base = va_arg(ptr, int);
+                    string = cc10_to_base_cc_upper(number, base, &want_write_amount);
+                    break;
+                }
+
+
+                case to:{
+                    char* str = va_arg(ptr, char*);
+                    int base = va_arg(ptr, int);
+                    string = string_cc_to_10CC_lower(str, base, &want_write_amount);
+                }
+
+                    break;
+                case TO:{
+                    char* str = va_arg(ptr, char*);
+                    int base = va_arg(ptr, int);
+                    string = string_cc_to_10CC_upper(str, base, &want_write_amount);
+                }
+
+                    break;
+                case mi:{
+                    int arg = va_arg(ptr, int);
+                    string = dump(&arg, sizeof(int), &want_write_amount);
+                }
+
+
+
+                    break;
+                case mu:{
+                    unsigned int arg = va_arg(ptr, unsigned int);
+                    string = dump(&arg, sizeof(unsigned int), &want_write_amount);
+                }
+
+
+                    break;
+                case md:{
+                    double arg = va_arg(ptr, double);
+                    string = dump(&arg, sizeof(double), &want_write_amount);
+                }
+
+                    break;
+                case mf:{
+                    float arg = va_arg(ptr, double );
+                    string = dump(&arg, sizeof(float), &want_write_amount);
+                }
+
+
+                    break;
+
+            }
+
+            add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, string);
+
+            position += 3;
+            free(string);
+            continue;
+
+        }
+        else{
+            if(current_flag == not_my){
+                bl = 1;
+            }
+
+            want_write_amount = 1;
+            add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, format[position]);
+
+
+            position++;
+            current_flag = u;
+
+        }
+
+    }
+
+    buffer[written] = '\0';
+
+    around_size += written;
+    if(around_size >= finish_size){
+        finish_size = around_size + 2;
+        char* tmp = NULL;
+        if(!(tmp = (char*) realloc(finish_string, finish_size))){
+            free(finish_string);
+            return 0;
+        }else{
+            finish_string = tmp;
+        }
+    }
+    finish_string[around_size] = '\0';
+
+    amount += vsprintf(finish_string+amount, buffer, ptr);
+
+    *out = finish_string;
+
+    va_end(ptr);
+    free(buffer);
+
+    return amount;
+}
+
 
 
 
