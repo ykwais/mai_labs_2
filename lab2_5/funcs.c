@@ -532,7 +532,7 @@ char* string_cc_to_10CC_lower(char *string, int base, int* amount) {//здесь
             count++;
         }
         else{
-            char* answer = cc10_to_base_cc_upper(result, 10, amount);
+            char* answer = cc10_to_base_cc_upper(result, 10, amount);////////////////////тут lower
             return answer;
         }
 
@@ -543,7 +543,7 @@ char* string_cc_to_10CC_lower(char *string, int base, int* amount) {//здесь
         result *= -1;
     }
 
-    char* answer = cc10_to_base_cc_upper(result, 10, amount);
+    char* answer = cc10_to_base_cc_upper(result, 10, amount);//////////////////////тут тоже
     return answer;
 
 }
