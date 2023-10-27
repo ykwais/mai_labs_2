@@ -21,9 +21,14 @@ int overfscanf(FILE* stream, char* format, ...);
 
 int main() {
     int d;
+    int k;
+    int g;
+    int num;
 
-    overfscanf(stdin, "sdf %Cv", &d,21);
-
+    overfscanf(stdin, "%d %Cv %Cv %Cv",&num, &k, 10, &g, 36, &d,21);
+    printf("%d\n", num);
+    printf("%d\n", k);
+    printf("%d\n", g);
     printf("%d\n", d);
 }
 
@@ -163,6 +168,7 @@ int overfscanf(FILE* stream, char* format, ...)
     int want_write_amount = 0;
 
     char* buffer = (char*)malloc(sizeof(char)*(size_buf));
+    buffer[0] = '\0';
 
     flag current_flag = u;
 
@@ -173,19 +179,13 @@ int overfscanf(FILE* stream, char* format, ...)
     while(format[position] != '\0' && position < length){
 
         if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my){
-            if(bl){
-                want_write_amount = 1;
-                add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, '\0');
 
-                amount += vfscanf(stream, buffer, ptr);
-                buffer[0] = '\0';
-                written = 0;
-                size_buf = 1;
-                bl = 0;
 
-            }
+            amount += vfscanf(stream, buffer, ptr);
+            buffer[0] = '\0';
+            written = 0;
+            size_buf = 1;
 
-            //char* string = NULL;
 
 
             switch(current_flag){
@@ -221,7 +221,7 @@ int overfscanf(FILE* stream, char* format, ...)
 
             }
 
-            //add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, string);
+            //add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, "abc");
 
             position += 3;
             //free(string);
@@ -229,10 +229,6 @@ int overfscanf(FILE* stream, char* format, ...)
 
         }
         else{
-            if(current_flag == not_my){
-                bl = 1;
-            }
-
             want_write_amount = 1;
             add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, format[position]);
 
