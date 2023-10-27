@@ -24,8 +24,9 @@ int main() {
     int k;
     int g;
     int num;
+    int base = 10;
 
-    overfscanf(stdin, "%d %Cv %Cv %Cv",&num, &k, 10, &g, 36, &d,21);
+    overfscanf(stdin, "%d %Cv %Cv %Cv",&num, &k, base, &g, base, &d,base);
     printf("%d\n", num);
     printf("%d\n", k);
     printf("%d\n", g);
@@ -180,7 +181,7 @@ int overfscanf(FILE* stream, char* format, ...)
 
         if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my){
 
-
+            buffer[written] = '\0';
             amount += vfscanf(stream, buffer, ptr);
             buffer[0] = '\0';
             written = 0;
@@ -190,19 +191,18 @@ int overfscanf(FILE* stream, char* format, ...)
 
             switch(current_flag){
                 case Ro: {
-                    int arg = va_arg(ptr, int);
-                    //string = int_to_rom(arg, &want_write_amount);
+
                     break;
                 }
 
                 case Zr:{
-                    unsigned int arg = va_arg(ptr, unsigned int);
-                    //string = zeck(arg, &want_write_amount);
+
                     break;
                 }
                 case Cv: {
                     int* number = va_arg(ptr, int*);
                     int base = va_arg(ptr, int);
+                    printf("base inputted: %d\n", base);
                     char tmp[65];
                     fscanf(stream, "%s", tmp);
                     *number = string_cc_to_10CC_lower(tmp, base, &want_write_amount);
@@ -211,9 +211,6 @@ int overfscanf(FILE* stream, char* format, ...)
 
 
                 case CV:{
-                    int number = va_arg(ptr, int);
-                    int base = va_arg(ptr, int);
-                    //string = cc10_to_base_cc_upper(number, base, &want_write_amount);
                     break;
                 }
 
@@ -224,6 +221,7 @@ int overfscanf(FILE* stream, char* format, ...)
             //add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, "abc");
 
             position += 3;
+            current_flag = u;
             //free(string);
             continue;
 
@@ -236,6 +234,7 @@ int overfscanf(FILE* stream, char* format, ...)
             current_flag = u;
 
         }
+        current_flag = u;
 
     }
 
