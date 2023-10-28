@@ -16,22 +16,109 @@ typedef enum flag_status_code{
     u
 }flag;
 
+typedef enum not_my_flg{
+    INT,
+    DOUB,
+    LD,
+    POINTER,
+    CHAR,
+    STRING,
+    LL,
+    LI,
+    un
+} not_my_flag;
+
 flag type_flag(char* string);
+not_my_flag another_flag(char* string, int* amount);
 int overfscanf(FILE* stream, char* format, ...);
+int roman_to_int(char* str);
+int zeck_to_int(char* str);
 
 int main() {
-    int d;
-    int k;
-    int g;
-    int num;
+    int d = 0;
+    int k = 0;
+    int g = 0;
+    int num = 0;
     int base = 10;
+    long long alpha = 0;
+    char str[10];
+    char c;
+    int roman = 0;
+    int zeckenorf = 0;
 
-    overfscanf(stdin, "%d %Cv %Cv %Cv",&num, &k, base, &g, base, &d,base);
+//    int l = roman_to_int("MMMCDLIX");
+//    printf("%d\n", l);
+
+
+
+    overfscanf(stdin, "%c%Zr%d%s %Cv%d%lld %CV%Ro", &c, &zeckenorf,&num, &str, &k, 16, &g, &alpha, &d, 16, &roman);
+
+
+
+    printf("%c\n", c);
     printf("%d\n", num);
+    printf("%s\n", str);
     printf("%d\n", k);
     printf("%d\n", g);
+    printf("%lld\n", alpha);
     printf("%d\n", d);
+    printf("roman: %d\n", roman);
+    printf("zeck: %d\n", zeckenorf);
+
+    printf("here:\n");
+    fflush(stdin);
+
+    overfscanf(stdin, "%s", &str);
+    printf("%s\n",str);
+
+
+
+    //printf("%d\n", d);
 }
+
+not_my_flag another_flag(char* string, int* amount)
+{
+    if(string[0] == '%' && string[1] == 'c' ){
+        *amount = 2;
+        return CHAR;
+    }
+    if(string[0] == '%' && string[1] == 's' ){
+        *amount = 2;
+        return STRING;
+    }
+    if(string[0] == '%' && (string[1] == 'i' || string[1] == 'd' || string[1] == 'x' || string[1] == 'X' || string[1] == 'o')){
+        *amount = 2;
+        return INT;
+    }
+    if(string[0] == '%' && string[1] == 'f' ){
+        *amount = 2;
+        return DOUB;
+
+    }
+    if(string[0] == '%' && string[1] == 'l' && string[2] == 'f'){
+        *amount = 3;
+        return DOUB;
+    }
+    if(string[0] == '%' && string[1] == 'L' && string[2] == 'F' ){
+        *amount = 3;
+        return LD;
+    }
+    if(string[0] == '%' && string[1] == 'l' && string[2] == 'd'  ){
+        *amount = 3;
+        return LI;
+    }
+    if(string[0] == '%' && string[1] == 'l' && string[2] == 'l' && string[3] == 'd'){
+        *amount = 4;
+        return LL;
+    }
+
+    if(string[0] == '%' && string[1] == 'p' ){
+        *amount = 2;
+        return POINTER;
+    }
+
+    return un;
+};
 
 
 flag type_flag(char* string)
@@ -53,6 +140,7 @@ flag type_flag(char* string)
 
         return CV;
     }
+
     return not_my;
 }
 
@@ -100,6 +188,10 @@ void add_to_buffer(char** buf, int* size_buf, int* written, int* want, char* new
 
 bool is_lower_alpha(char c){
     return (c >= 97 && c <= 122);
+}
+
+bool is_upper_alpha(char c){
+    return (c >= 65 && c <= 90);
 }
 
 int length_long_long(long long number){
@@ -152,6 +244,143 @@ ll string_cc_to_10CC_lower(char *string, int base, int* amount) {//здесь б
 
 }
 
+ll string_cc_to_10CC_upper(char *string, int base, int* amount) {//здесь буду отслеживать переполнение
+    if(base > 36 || base < 2){
+        base = 10;
+    }
+    bool negative = false;
+    char *ptr = string;
+    long long result = 0;
+    int count = 0;
+
+    while (*ptr) {
+        if(isdigit(*ptr) || is_upper_alpha(*ptr) || (*ptr == 45 && count == 0)){
+            if(*ptr == 45 && count == 0){
+                negative = true;
+                ptr++;
+                count++;
+                continue;
+            }
+            if(length_long_long(result) > 17 ){
+                //overflow
+
+                return result;
+            }
+            result = result * base + (isdigit(*ptr) ? *ptr - '0' : *ptr - 'A' + 10);
+            ptr++;
+            count++;
+        }
+        else{
+
+            return result;
+        }
+
+    }
+
+    if(negative)
+    {
+        result *= -1;
+    }
+
+
+    return result;
+
+}
+
+
+int roman_to_int(char* str) {
+    int result = 0;
+    int previous = 0;
+
+
+    int values[7] = {1000, 500, 100, 50, 10, 5, 1};
+    char symbols[7] = {'M', 'D', 'C', 'L', 'X', 'V', 'I'};
+
+    int length = strlen(str);
+
+
+    for (int i = length-1; i >= 0; i--) {
+
+        int index = 0;
+        while (symbols[index] != str[i]) {
+            index++;
+        }
+
+
+        if (symbols[index + 1] != '\0' && values[index] < previous) {
+            result -= values[index];//IV, IX ...
+        }
+
+        else {
+            result+= values[index];
+        }
+        previous = values[index];
+    }
+
+    return result;
+}
+
+unsigned int* fib_row(unsigned int max, int *amount)
+{
+    int size = 2;
+    int counter = 2;
+    unsigned int *res = (unsigned int *)malloc(sizeof(unsigned int) * size);
+    if (res == NULL)
+    {
+        return NULL;
+    }
+
+    res[0] = 1;
+    res[1] = 1;
+
+    while (counter < max)
+    {
+        unsigned int c = res[counter - 2] + res[counter - 1];
+
+        if (c >= UINT_MAX / 2)
+        {
+            free(res);
+            return NULL;
+        }
+
+        if (counter >= size)
+        {
+            size *= 2;
+            unsigned int *tmp = (unsigned int *)realloc(res, sizeof(unsigned int) * size);
+            if (tmp == NULL)
+            {
+                free(res);
+                return NULL;
+            }
+            res = tmp;
+        }
+        res[counter] = c;
+        counter++;
+    }
+    *amount = counter;
+    return res;
+}
+
+
+int zeck_to_int(char* str)
+{
+    int result = 0;
+    int n = 0;
+    int length = strlen(str);
+    unsigned int* fibs = fib_row(length-1, &n);
+    for(int i = 0; i < length-1; i++){
+        if(str[i] == '1'){
+            result += fibs[i];
+        }
+    }
+    free(fibs);
+    return result;
+}
+
+
+
+
+
 int overfscanf(FILE* stream, char* format, ...)
 {
     int bl = 0;
@@ -169,64 +398,179 @@ int overfscanf(FILE* stream, char* format, ...)
     int want_write_amount = 0;
 
     char* buffer = (char*)malloc(sizeof(char)*(size_buf));
+    if(buffer == NULL){
+        return 0;//bad  mem alloc
+    }
     buffer[0] = '\0';
 
     flag current_flag = u;
+    not_my_flag extra_flag = un;
 
     va_list ptr;
     va_start(ptr, format);
 
 
     while(format[position] != '\0' && position < length){
+        if(extra_flag != un){
+            buffer[written] = '\0';
+            amount += vfscanf(stream, buffer, ptr);
+
+            switch(extra_flag){
+                case CHAR:{
+                    va_arg(ptr, int);
+                    break;
+                }
+                case STRING:{
+                    va_arg(ptr, char*);
+                    break;
+                }
+                case INT:{
+                    va_arg(ptr, int);
+                    break;
+                }
+                case DOUB:{
+                    va_arg(ptr, double);
+                    break;
+                }
+                case LD:{
+                    va_arg(ptr, long double);
+                    break;
+                }
+                case LL:{
+                    va_arg(ptr, long long int);
+                    break;
+                }
+                case LI:{
+                    va_arg(ptr, long int);
+                    break;
+                }
+                case POINTER:{
+                    va_arg(ptr, char*);
+                }
+            }
+
+            buffer[0] = '\0';
+            written = 0;
+            size_buf = 1;
+            extra_flag = un;
+        }
 
         if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my){
 
             buffer[written] = '\0';
             amount += vfscanf(stream, buffer, ptr);
+
+            switch(extra_flag){
+                case CHAR:{
+                    va_arg(ptr, int);
+
+                }
+                    break;
+                case STRING:{
+                    va_arg(ptr, char*);
+
+                }
+                    break;
+                case INT:{
+                    va_arg(ptr, int);
+
+                }
+                    break;
+                case DOUB:{
+                    va_arg(ptr, double);
+
+                }
+                    break;
+                case LD:{
+                    va_arg(ptr, long double);
+
+                }
+                    break;
+                case LL:{
+                    va_arg(ptr, long long int);
+
+                }
+                    break;
+                case LI:{
+                    va_arg(ptr, long int);
+
+                }
+                    break;
+                case POINTER:{
+                    va_arg(ptr, char*);
+                }
+                    break;
+            }
+
             buffer[0] = '\0';
             written = 0;
             size_buf = 1;
+            extra_flag = un;
 
 
 
             switch(current_flag){
                 case Ro: {
-
+                    int* number = va_arg(ptr, int*);
+                    char tmp[100];
+                    fscanf(stream, "%s", tmp);
+                    *number = roman_to_int(tmp);
+                    amount++;
                     break;
                 }
 
                 case Zr:{
+                    int* number = va_arg(ptr, int*);
+                    char tmp[100];
+                    fscanf(stream, "%s", tmp);
+                    *number = zeck_to_int(tmp);
+                    amount++;
 
                     break;
                 }
                 case Cv: {
                     int* number = va_arg(ptr, int*);
                     int base = va_arg(ptr, int);
-                    printf("base inputted: %d\n", base);
+                    //printf("base inputted: %d\n", base);
                     char tmp[65];
                     fscanf(stream, "%s", tmp);
                     *number = string_cc_to_10CC_lower(tmp, base, &want_write_amount);
+                    amount++;
                     break;
                 }
 
 
                 case CV:{
+                    int* number = va_arg(ptr, int*);
+                    int base = va_arg(ptr, int);
+                    //printf("base inputted: %d\n", base);
+                    char tmp[65];
+                    fscanf(stream, "%s", tmp);
+                    *number = string_cc_to_10CC_upper(tmp, base, &want_write_amount);
+                    amount++;
                     break;
                 }
 
-
-
             }
-
-            //add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, "abc");
 
             position += 3;
             current_flag = u;
-            //free(string);
+
             continue;
 
         }
         else{
+            if(current_flag == not_my && format[position] == '%'){
+                extra_flag = another_flag(format + position, &want_write_amount);
+                if(extra_flag == un){
+                    return 0;//неопознанный
+                }
+                add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, format + position);
+                position += want_write_amount;
+
+                continue;
+            }
+
             want_write_amount = 1;
             add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, format[position]);
 
@@ -236,6 +580,50 @@ int overfscanf(FILE* stream, char* format, ...)
         }
         current_flag = u;
 
+    }
+
+    if(extra_flag != un){
+        buffer[written] = '\0';
+        amount += vfscanf(stream, buffer, ptr);
+
+        switch(extra_flag){
+            case CHAR:{
+                va_arg(ptr, int);
+                break;
+            }
+            case STRING:{
+                va_arg(ptr, char*);
+                break;
+            }
+            case INT:{
+                va_arg(ptr, int);
+                break;
+            }
+            case DOUB:{
+                va_arg(ptr, double);
+                break;
+            }
+            case LD:{
+                va_arg(ptr, long double);
+                break;
+            }
+            case LL:{
+                va_arg(ptr, long long int);
+                break;
+            }
+            case LI:{
+                va_arg(ptr, long int);
+                break;
+            }
+            case POINTER:{
+                va_arg(ptr, char*);
+            }
+        }
+
+        buffer[0] = '\0';
+        written = 0;
+        size_buf = 1;
+        extra_flag = un;
     }
 
     buffer[written] = '\0';
