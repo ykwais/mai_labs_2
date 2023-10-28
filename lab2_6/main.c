@@ -31,6 +31,7 @@ typedef enum not_my_flg{
 flag type_flag(char* string);
 not_my_flag another_flag(char* string, int* amount);
 int overfscanf(FILE* stream, char* format, ...);
+int oversscanf(char* str, char* format, ...);
 int roman_to_int(char* str);
 int zeck_to_int(char* str);
 
@@ -56,6 +57,7 @@ int main() {
 
 
     printf("%c\n", c);
+    printf("zeck: %d\n", zeckenorf);
     printf("%d\n", num);
     printf("%s\n", str);
     printf("%d\n", k);
@@ -63,7 +65,7 @@ int main() {
     printf("%lld\n", alpha);
     printf("%d\n", d);
     printf("roman: %d\n", roman);
-    printf("zeck: %d\n", zeckenorf);
+
 
     printf("here:\n");
     fflush(stdin);
@@ -71,9 +73,37 @@ int main() {
     overfscanf(stdin, "%s", &str);
     printf("%s\n",str);
 
+    oversscanf("T 0010010011 234 sdf a9 -587 2435 A9 MMM", "%c%Zr%d%s %Cv%d%lld %CV%Ro", &c, &zeckenorf,&num, &str, &k, 16, &g, &alpha, &d, 16, &roman);
+    printf("!!!\n");
+    printf("%c\n", c);
+    printf("zeck: %d\n", zeckenorf);
+    printf("%d\n", num);
+    printf("%s\n", str);
+    printf("%d\n", k);
+    printf("%d\n", g);
+    printf("%lld\n", alpha);
+    printf("%d\n", d);
+    printf("roman: %d\n", roman);
+
+
 
 
     //printf("%d\n", d);
+}
+
+int howmuch(char* str, int count)
+{
+    int answer = 0;
+    for(int i = 0; i < count; ++i){
+        while(!isspace(str[answer])){
+            ++answer;
+        }
+        while(isspace(str[answer])){
+            ++answer;
+        }
+
+    }
+    return answer;
 }
 
 not_my_flag another_flag(char* string, int* amount)
@@ -631,6 +661,267 @@ int overfscanf(FILE* stream, char* format, ...)
 
     amount += vfscanf(stream, buffer, ptr);
 
+    va_end(ptr);
+    free(buffer);
+    return amount;
+}
+
+
+int oversscanf(char* str, char* format, ...)
+{
+    int bl = 0;
+
+    int amount = 0;
+
+    int length = strlen(format);
+
+    int position = 0;
+
+    int written = 0;
+
+    int size_buf = 1;
+
+    int how_m = 0;
+
+    int want_write_amount = 0;
+
+    char* buffer = (char*)malloc(sizeof(char)*(size_buf));
+    if(buffer == NULL){
+        return 0;//bad  mem alloc
+    }
+    buffer[0] = '\0';
+
+    flag current_flag = u;
+    not_my_flag extra_flag = un;
+
+    va_list ptr;
+    va_start(ptr, format);
+
+
+    while(format[position] != '\0' && position < length){
+        if(extra_flag != un){
+            buffer[written] = '\0';
+            amount += vsscanf(str+how_m, buffer, ptr);
+            how_m = howmuch(str, amount);
+
+            switch(extra_flag){
+                case CHAR:{
+                    va_arg(ptr, int);
+                    break;
+                }
+                case STRING:{
+                    va_arg(ptr, char*);
+                    break;
+                }
+                case INT:{
+                    va_arg(ptr, int);
+                    break;
+                }
+                case DOUB:{
+                    va_arg(ptr, double);
+                    break;
+                }
+                case LD:{
+                    va_arg(ptr, long double);
+                    break;
+                }
+                case LL:{
+                    va_arg(ptr, long long int);
+                    break;
+                }
+                case LI:{
+                    va_arg(ptr, long int);
+                    break;
+                }
+                case POINTER:{
+                    va_arg(ptr, char*);
+                }
+            }
+
+            buffer[0] = '\0';
+            written = 0;
+            size_buf = 1;
+            extra_flag = un;
+        }
+
+        if(format[position] == '%' && (current_flag = type_flag(format+position))!=not_my){
+
+            buffer[written] = '\0';
+            amount += vsscanf(str + how_m, buffer, ptr);
+            how_m = howmuch(str, amount);
+
+            switch(extra_flag){
+                case CHAR:{
+                    va_arg(ptr, int);
+
+                }
+                    break;
+                case STRING:{
+                    va_arg(ptr, char*);
+
+                }
+                    break;
+                case INT:{
+                    va_arg(ptr, int);
+
+                }
+                    break;
+                case DOUB:{
+                    va_arg(ptr, double);
+
+                }
+                    break;
+                case LD:{
+                    va_arg(ptr, long double);
+
+                }
+                    break;
+                case LL:{
+                    va_arg(ptr, long long int);
+
+                }
+                    break;
+                case LI:{
+                    va_arg(ptr, long int);
+
+                }
+                    break;
+                case POINTER:{
+                    va_arg(ptr, char*);
+                }
+                    break;
+            }
+
+            buffer[0] = '\0';
+            written = 0;
+            size_buf = 1;
+            extra_flag = un;
+
+
+
+            switch(current_flag){
+                case Ro: {
+                    int* number = va_arg(ptr, int*);
+                    char tmp[100];
+                    sscanf(str + how_m, "%s", tmp);
+                    *number = roman_to_int(tmp);
+                    amount++;
+                    break;
+                }
+
+                case Zr:{
+                    int* number = va_arg(ptr, int*);
+                    char tmp[100];
+                    sscanf(str+ how_m, "%s", tmp);
+                    *number = zeck_to_int(tmp);
+                    amount++;
+
+                    break;
+                }
+                case Cv: {
+                    int* number = va_arg(ptr, int*);
+                    int base = va_arg(ptr, int);
+                    //printf("base inputted: %d\n", base);
+                    char tmp[65];
+                    sscanf(str+ how_m, "%s", tmp);
+                    *number = string_cc_to_10CC_lower(tmp, base, &want_write_amount);
+                    amount++;
+                    break;
+                }
+
+
+                case CV:{
+                    int* number = va_arg(ptr, int*);
+                    int base = va_arg(ptr, int);
+                    //printf("base inputted: %d\n", base);
+                    char tmp[65];
+                    sscanf(str+ how_m, "%s", tmp);
+                    *number = string_cc_to_10CC_upper(tmp, base, &want_write_amount);
+                    amount++;
+                    break;
+                }
+
+            }
+            how_m = howmuch(str, amount);
+            position += 3;
+            current_flag = u;
+
+            continue;
+
+        }
+        else{
+            if(current_flag == not_my && format[position] == '%'){
+                extra_flag = another_flag(format + position, &want_write_amount);
+                if(extra_flag == un){
+                    return 0;//неопознанный
+                }
+                add_to_buffer(&buffer, &size_buf, &written, &want_write_amount, format + position);
+                position += want_write_amount;
+
+                continue;
+            }
+
+            want_write_amount = 1;
+            add_to_buffer_1(&buffer, &size_buf, &written, &want_write_amount, format[position]);
+
+            position++;
+            current_flag = u;
+
+        }
+        current_flag = u;
+
+    }
+
+    if(extra_flag != un){
+        buffer[written] = '\0';
+        amount += vsscanf(str + how_m, buffer, ptr);
+        how_m = howmuch(str, amount);
+
+        switch(extra_flag){
+            case CHAR:{
+                va_arg(ptr, int);
+                break;
+            }
+            case STRING:{
+                va_arg(ptr, char*);
+                break;
+            }
+            case INT:{
+                va_arg(ptr, int);
+                break;
+            }
+            case DOUB:{
+                va_arg(ptr, double);
+                break;
+            }
+            case LD:{
+                va_arg(ptr, long double);
+                break;
+            }
+            case LL:{
+                va_arg(ptr, long long int);
+                break;
+            }
+            case LI:{
+                va_arg(ptr, long int);
+                break;
+            }
+            case POINTER:{
+                va_arg(ptr, char*);
+            }
+        }
+
+        buffer[0] = '\0';
+        written = 0;
+        size_buf = 1;
+        extra_flag = un;
+    }
+
+    buffer[written] = '\0';
+
+
+    amount += vsscanf(str+how_m, buffer, ptr);
+    //how_m = howmuch(str, amount);
     va_end(ptr);
     free(buffer);
     return amount;
