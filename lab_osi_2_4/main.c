@@ -1,87 +1,108 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
-// <sys/wait.h>
+#include <sys/wait.h>
 
-void search_string_in_file(char* filename, char* search_string) {
-    int yes = 0;
 
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf( "Не удалось открыть файл %s\n", filename);
-        return;
+
+void search_string(const char *name, const char *string)
+{
+
+    FILE *file = fopen(name, "r");
+    if (file == NULL)
+    {
+        printf("Error opening file");
+        exit(1);
     }
 
     char line[100];
-    int line_number = 1;
-    while (fgets(line, 100, file) != NULL) {
+    int line_pos = 1;
+    bool found = 0;
 
-        if (!strcmp(line, search_string)) {
-            printf("Строка найдена в файле %s, строка #%d", filename, line_number);
-            yes = 1;
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
+        if (strstr(line, string) != NULL)
+        {
+            printf("in file %s string # %d)\n", name, line_pos);
+            found = true;
         }
-        line_number++;
-    }
-    if(!yes){
-        printf("Строка не найдена в файле %s\n", filename);
+        line_pos++;
     }
 
+    if (!found)
+    {
+        printf("no string in file: %s\n", name);
+    }
 
     fclose(file);
 }
 
-int main(int argc, char** argv) {
-    if (argc < 3) {
-        printf("мало аргументов!\n");
-        return 0;
+int main(int argc, char *argv[])
+{
+    if (argc != 3)
+    {
+        printf("wrong argc\n");
+        return 1;
     }
 
-    char* filenames_file = argv[1];
-    char* search_string = argv[2];
+    const char *input_filename = argv[1];
+    const char *searchstring = argv[2];
 
-    FILE* file = fopen(filenames_file, "r");
-    if (file == NULL) {
-        printf("Не удалось открыть файл %s\n", filenames_file);
+    FILE *files_list = fopen(input_filename, "r");
+    if (files_list == NULL)
+    {
+        printf("problem with file opening\n");
         return 1;
     }
 
     char filename[100];
-    while (fgets(filename, 100, file) != NULL) {
 
-        int length = strlen(filename);
-        if(filename[length-1] == '\n' && length > 0){
-            filename[length-1] = '\0';
+    while (fgets(filename, sizeof(filename), files_list) != NULL)
+    {
+
+        size_t length = strlen(filename);
+        if (length > 0 && filename[length - 1] == '\n')
+        {
+            filename[length - 1] = '\0';
         }
 
-        pid_t pid = fork();
-        if(pid == -1){
-            printf("проблема с созданием нового процесса\n");
-            return 0;
-        }
-        else if (pid == 0) {
+        search_string(filename, searchstring);
 
-            search_string_in_file(filename, search_string);
+        pid_t childPid = fork(); // создаем новый процесс
+        if (childPid == -1)
+        {
+            printf("Error creating child process");
+            return 1;
+        }
+
+        if (childPid == 0)
+        {
+
+            search_string(filename, searchstring);
             exit(0);
-
         } else {}
-
     }
 
-    fclose(file);
+    fclose(files_list);
 
-//    int status;
-//    pid_t child_pid;
-//    while ((child_pid = wait(&status)) > 0) {
-//        // Обработка статуса завершения процесса-потомка
-//        if (WIFEXITED(status)) {
-//            int exit_status = WEXITSTATUS(status);
-//            if (exit_status != 0) {
-//                fprintf(stderr, "Процесс-потомок %d завершился с ошибкой\n", child_pid);
-//            }
-//        } else {
-//            fprintf(stderr, "Процесс-потомок %d завершился некорректно\n", child_pid);
-//        }
-//    }
+    int status;
+    pid_t wpid;
+
+
+    while ((wpid = wait(&status)) > 0)
+    {
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        {
+            printf("well\n");
+        }
+        else
+        {
+            printf("problem\n");
+        }
+    }
+
+    return 0;
 }
